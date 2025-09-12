@@ -21,18 +21,20 @@ def main():
         "--questions-path",
         type=str,
         default=os.environ.get("NOMAD_QUESTIONS_PATH"),
-        help="Port that the questionnare should be hosted on (default: from NOMAD_EXPERIMENT_QUESTIONNAIRE_PORT env var)",
+        help="Directory that questions are read from (default: from NOMAD_QUESTIONS_PATH env var)",
     )
 
     parser.add_argument(
         "--answers-path",
         type=str,
         default=os.environ.get("NOMAD_ANSWERS_PATH"),
-        help="Port that the questionnare should be hosted on (default: from NOMAD_EXPERIMENT_QUESTIONNAIRE_PORT env var)",
+        help="Directory that answers are written to (default: from NOMAD_ANSWERS_PATH env var)",
     )
 
     args = parser.parse_args()
-    create_app(Path(args.questions_path), Path(args.answers_path)).run(port=args.port)
+    create_app(Path(args.questions_path), Path(args.answers_path)).run(
+        host="0.0.0.0", port=args.port
+    )
 
 
 if __name__ == "__main__":
