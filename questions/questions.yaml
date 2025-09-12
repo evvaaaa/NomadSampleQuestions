@@ -1,0 +1,32 @@
+field_descriptions:
+  id: "The name of the field in the answers."
+  label: "Label above the input box."
+  required: "Whether the field is required on submission, false by default."
+  multiple: "Whether there should be multiple options for this field."
+  type: "text, number, or select"
+  options: "In the case of a select, this is the options list."
+
+
+questions:
+  - id: names
+    label: "The names of scientists involved in the experiment?"
+    required: true
+    multiple: true
+    type: text
+  - id: email
+    label: "The emails of the scientists?"
+    required: true
+    type: text
+    multiple: true
+  - id: color
+    label: "You SURELY must have a favorite color????"
+    type: select
+    options:
+      - I'm an adult, I don't have a favorite color...
+      - Blue
+      - Red
+      - Pink
+  - id: color_description
+    label: "How would you describe what this color means to you?"
+    type: text
+

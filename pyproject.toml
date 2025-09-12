@@ -1,0 +1,18 @@
+[project]
+name = "nomad-sample-questionnaire"
+classifiers = ["Programming Language :: Python :: 3.12"]
+description = "Questionnaire webapp to output nomad metadata."
+dependencies = ["flask", "pydantic", "pyyaml"]
+dynamic = ["version"]
+readme = "README.md"
+requires-python = ">=3.12"
+
+[project.urls]
+GitHub = "https://github.com/evalott100/NomadSampleQuestionnaire"
+
+[[project.authors]]
+email = "evalott100@gmail.com"
+name = "Eva Lott"
+
+[project.optional-dependencies]
+dev = ["ruff"]
