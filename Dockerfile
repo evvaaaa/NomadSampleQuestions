@@ -11,6 +11,9 @@ WORKDIR /app
 # Copy project files
 COPY . /app
 
+RUN apt update
+RUN apt install -y git
+
 # Install dependencies (install package from top-level directory)
 RUN pip install --upgrade pip \
     && pip install .

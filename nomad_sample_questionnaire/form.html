@@ -5,6 +5,16 @@
 <head>
   <title>Survey Form (Proof of Concept)</title>
   <script>
+    function clearForm() {
+      fetch('/clear_redis', {method: 'POST'})
+        .then(response => response.json())
+        .then(data => {
+          document.querySelector('form').reset();
+          alert(data.message);
+        });
+    }
+  </script>
+  <script>
     function addField(fieldId, fieldType, required, options) {
       const container = document.getElementById(fieldId + '_container');
       const count = container.querySelectorAll('.multi-input').length;
@@ -47,6 +57,7 @@
 <body>
   <h2>Survey Form (Proof of Concept)</h2>
   <h3>This data will be used in your stored data. Be descriptive!</h3>
+  <button type="button" onclick="clearForm()">Clear previous data from run engine.</button>
   <style>
     body, form, input, select, textarea, label, button {
       font-size: 1.2em;

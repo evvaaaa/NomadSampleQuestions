@@ -1,12 +1,12 @@
 [build-system]
-requires = ["setuptools>=61.0", "setuptools-scm"]
+requires = ["setuptools>=64", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "nomad-sample-questionnaire"
 classifiers = ["Programming Language :: Python :: 3.12"]
 description = "Questionnaire webapp to output nomad metadata."
-dependencies = ["flask", "pydantic", "pyyaml"]
+dependencies = ["flask", "pydantic", "pyyaml", "redis", "redis-json-dict"]
 dynamic = ["version"]
 readme = "README.md"
 requires-python = ">=3.12"
@@ -20,6 +20,10 @@ name = "Eva Lott"
 
 [project.optional-dependencies]
 dev = ["ruff"]
+
+
+[tool.setuptools_scm]
+version_file = "nomad_sample_questionnaire/_version.py"
 
 [tool.setuptools]
 packages = ["nomad_sample_questionnaire"]

@@ -1,12 +1,29 @@
 from pathlib import Path
 from uuid import uuid4
 from flask import Flask, render_template_string, request, redirect, url_for
+from .logger import logger
 import yaml
+import redis
+from redis_json_dict.redis_json_dict import RedisJSONDict
 
 FORM_HTML = (Path(__file__).parent / "form.html").read_text()
 
 
-def create_app(questions_directory: Path, answers_directory: Path) -> Flask:
+def create_app(
+    questions_directory: Path, answers_directory: Path, redis_address: str | None
+) -> Flask:
+    logger.info("Setting up web app.")
+    if redis_address:
+        redis_persistent_dict = (
+            RedisJSONDict(redis.Redis(redis_address), "bluesky_metadata")
+            if redis_address
+            else None
+        )
+        logger.info("Redis persistent dictionary set up.")
+    else:
+        redis_persistent_dict = None
+        logger.info("Redis address not provided.")
+
     if not questions_directory.exists():
         raise ValueError(f"Given questions path {questions_directory} does not exist")
 
@@ -19,6 +36,12 @@ def create_app(questions_directory: Path, answers_directory: Path) -> Flask:
         static_answers = yaml.safe_load(f)
 
     app = Flask(__name__)
+
+    @app.route("/clear_redis", methods=["POST"])
+    def clear_redis():
+        if redis_persistent_dict:
+            redis_persistent_dict["nomad"] = {}
+        return "Successfully cleared redis", 204
 
     @app.route("/", methods=["GET", "POST"])
     def survey():
@@ -56,10 +79,16 @@ def create_app(questions_directory: Path, answers_directory: Path) -> Flask:
                 )
             experiment_uuid = uuid4()
             answers.update(static_answers)
+
+            if redis_persistent_dict:
+                logger.info("Writing answers to redis.")
+                redis_persistent_dict["nomad"] = answers
+
             answers_yaml = yaml.dump(answers, sort_keys=False, allow_unicode=True)
             answers_file = answers_directory / f"{experiment_uuid}.yaml"
             with answers_file.open("w+") as f:
                 f.write(answers_yaml)
+                logger.info(f"Writing answers to {answers_file}")
             # Redirect to avoid POST resubmission
             return redirect(url_for("survey", saved="true", yaml=answers_yaml))
 

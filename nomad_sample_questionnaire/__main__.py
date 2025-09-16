@@ -27,14 +27,27 @@ def main():
     parser.add_argument(
         "--answers-path",
         type=str,
-        default=os.environ.get("NOMAD_ANSWERS_PATH"),
+        default=os.environ.get("NOMAD_ANSWERS_PATH", ""),
         help="Directory that answers are written to (default: from NOMAD_ANSWERS_PATH env var)",
     )
 
-    args = parser.parse_args()
-    create_app(Path(args.questions_path), Path(args.answers_path)).run(
-        host="0.0.0.0", port=args.port
+    parser.add_argument(
+        "--redis-address",
+        type=str,
+        default=os.environ.get("REDIS_ADDRESS", ""),
+        help="Host of the redis service (without port 6379) (default: from REDIS_ADDRESS env var)",
     )
+
+    args = parser.parse_args()
+    if not args.questions_path:
+        raise ValueError(
+            "You must provide a path for questions as a command line argument, or in an environment variable"
+        )
+    create_app(
+        Path(args.questions_path),
+        Path(args.answers_path),
+        args.redis_address,
+    ).run(host="0.0.0.0", port=args.port)
 
 
 if __name__ == "__main__":
